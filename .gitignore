@@ -1,0 +1,7 @@
+.vscode
+.DS_Store
+.terraform
+google-credentials.json
+.envrc
+backend.tf
+Notes.md
