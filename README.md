@@ -67,7 +67,8 @@ In order to do so follow the following steps.
 - Link a billing account to the project with
   `gcloud beta billing projects link "$SEED_PROJECT_ID" --billing-account "$BILLING_ACCOUNT_ID"`
 - We need to enable some APIs first, the rest can later be activated via Code. This can be done with
-  `gcloud services enable cloudresourcemanager.googleapis.com`
+  `gcloud services enable cloudresourcemanager.googleapis.com` and repeat for:
+  - iamcredentials.googleapis.com
 - Create a new service account within the new seed project to be used by the terraform pipeline. This can be
   done with the command
   `gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" --display-name="Service Account for Organization Terraform Usage"`.
