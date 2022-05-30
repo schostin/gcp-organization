@@ -54,7 +54,7 @@ This includes:
 
 ### Seeding
 
-For the very initial run and in order to create this organisation setup, we do need a seed account with a
+For the very initial run and in order to create this organization setup, we do need a seed account with a
 storage bucket and service account in order to save the terraform state and run / apply the terraform changes.
 
 In order to do so follow the following steps.
