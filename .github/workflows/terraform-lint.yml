@@ -1,0 +1,38 @@
+name: "Terraform"
+on:
+  push:
+    branches: ["**"]
+    tags-ignore: ["**"]
+
+jobs:
+  tflint:
+    name: TFLint base-infrastructure
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - uses: actions/cache@v2
+        name: Cache plugin dir
+        with:
+          path: ~/.tflint.d/plugins
+          key: ubuntu-tflint-${{ hashFiles('.tflint.hcl') }}
+      - uses: terraform-linters/setup-tflint@v1
+        name: Setup TFLint
+        with:
+          tflint_version: v0.37.0
+      - name: Init TFLint
+        run: tflint --init
+      - name: Run TFLint
+        run: tflint base-infrastructure
+  terragrunt-plan:
+    name: TFLint base-infrastructure
+    runs-on: ubuntu-20.04
+    needs:
+      - tflint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Terragrunt
+        uses: autero1/action-terragrunt@v1.1.0
+        with:
+          terragrunt_version: 0.37.1

@@ -52,5 +52,73 @@ This includes:
 
 ## Implementation details
 
+### Seeding
+
+For the very initial run and in order to create this organisation setup, we do need a seed account with a
+storage bucket and service account in order to save the terraform state and run / apply the terraform changes.
+
+In order to do so follow the following steps.
+
+- Get the organization id and think of a name and id for the seed project (`gcloud organizations list`).
+- Create a new project with the command
+  `gcloud projects create "$SEED_PROJECT_ID" --name "$SEED_PROJECT_NAME" --organization "$ORGANIZATION_ID"`
+- Get the project ID of the created project with `gcloud projects list`. Set this project as default for
+  all following commands by `gcloud config set project $SEED_PROJECT_ID`.
+- Link a billing account to the project with
+  `gcloud beta billing projects link "$SEED_PROJECT_ID" --billing-account "$BILLING_ACCOUNT_ID"`
+- We need to enable some APIs first, the rest can later be activated via Code. This can be done with
+  `gcloud services enable cloudresourcemanager.googleapis.com`
+- Create a new service account within the new seed project to be used by the terraform pipeline. This can be
+  done with the command
+  `gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" --display-name="Service Account for Organization Terraform Usage"`.
+
+  You can get the mail of the created service account with `gcloud iam service-accounts list`.
+
+- Next we need to grant the necessary roles to the service account on the organization level. This can be done with the command:
+
+  ```bash
+  gcloud organizations add-iam-policy-binding "$ORGANIZATION_ID" \
+  --member "serviceAccount:terraform-organization-sa@sebastianneb-seed-2022.iam.gserviceaccount.com" \
+  --role "roles/resourcemanager.folderAdmin"
+  ```
+
+  You'll have to repeat this command for the following roles:
+
+  - roles/resourcemanager.folderAdmin
+  - roles/resourcemanager.projectCreator
+  - roles/resourcemanager.projectDeleter
+
+- After that we have to create a GCS state bucket that will holde the initial terraform state files. The command
+  can be used: `gsutil mb -b on -l EUROPE-WEST3 gs://$BUCKET_NAME`
+- Grant the service account access rights on the created bucket (best via the UI)
+- If we want to use GitHub Actions Workload Identity Federation we also have to create the necessary resources for this. For more
+  information visit [](https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions)
+
+  - Create the Workload Identity Pool with
+    `gcloud iam workload-identity-pools create "github-auth" --location="global" --display-name="GitHub Auth Pool"`
+  - Create the attribute mapping with
+
+    ```bash
+    gcloud iam workload-identity-pools providers create-oidc "github-provider" \
+    --location="global" \
+    --workload-identity-pool="github-auth" \
+    --display-name="GitHub provider" \
+    --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository" \
+    --issuer-uri="https://token.actions.githubusercontent.com"
+    ```
+
+  - Grant the service account the right to be impersonated from GH actions with
+
+    ```bash
+    gcloud iam service-accounts add-iam-policy-binding "$SERVICE_ACCOUNT_EMAIL" \
+    --role="roles/iam.workloadIdentityUser" \
+    --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/github-auth/subject/$GITHUB_REPOSITORY_WITH_OWNER"
+    ```
+
+- For local development we can grant our own user the right to impersonate the service account or download the credentials and use those with
+  the environment variable `GOOGLE_CREDENTIALS` which.
+
+### Base Infrastructure
+
 I am using terragrunt to further orchestrate the different steps and make use of easier and speakable
 environment variables instead of prefixing those with `TF_VAR_`.
