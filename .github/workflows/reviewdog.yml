@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Check misspell
-        uses: reviewdog/action-misspell@v1.11
+        uses: reviewdog/action-misspell@v1.12
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-check
@@ -25,7 +25,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Check yamllint
-        uses: reviewdog/action-yamllint@v1.5
+        uses: reviewdog/action-yamllint@v1.6
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-check
@@ -37,7 +37,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Check markdownlint
-        uses: reviewdog/action-markdownlint@v0.5
+        uses: reviewdog/action-markdownlint@v0.7
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-check
