@@ -27,6 +27,9 @@ jobs:
   terragrunt-plan:
     name: TFLint base-infrastructure
     runs-on: ubuntu-20.04
+    permissions:
+      contents: "read"
+      id-token: "read"
     needs:
       - tflint
     steps:
