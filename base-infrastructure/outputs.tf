@@ -8,26 +8,39 @@ output "seed_project_number" {
   description = "The project number of the seed project"
 }
 
-output "sandbox_folder_id" {
+output "sandboxes_folder_id" {
   value       = google_folder.sandboxes.id
-  description = "The folder id of the sanbbox folder in the form 'folders/{id}'"
+  description = "The folder id of the sandbox folder in the form 'folders/{id}'"
 }
 
 output "products_folder_id" {
   value       = google_folder.products.id
-  description = "The folder id of the sanbbox folder in the form 'folders/{id}'"
+  description = "The folder id of the products folder in the form 'folders/{id}'"
 }
 output "shared_infrastructure_folder_id" {
   value       = google_folder.shared_infrastructure.id
-  description = "The folder id of the sanbbox folder in the form 'folders/{id}'"
+  description = "The folder id of the shared infrastructure folder in the form 'folders/{id}'"
 }
 
-output "shared_infrastructure_main_dns_poroject_id" {
+output "shared_infrastructure_main_dns_project_id" {
   value       = module.shared_infrastructure_dns_project.project_id
-  description = "The project id of the created main DNS project"
+  description = "The project id of the main dns project that holds the main dns zones"
 }
 
-output "shared_infrastructure_main_dns_servers" {
-  value       = google_dns_managed_zone.main.name_servers
-  description = "The name servers of the created DNS zone to be placed in the Record-set of the Domain registration"
+output "shared_infrastructure_main_dns_zone" {
+  value = {
+    id           = google_dns_managed_zone.main.id
+    name         = google_dns_managed_zone.main.name
+    name_servers = google_dns_managed_zone.main.name_servers
+  }
+  description = "The properties of the main dns zone"
+}
+
+output "shared_infrastructure_sandboxes_dns_zone" {
+  value = {
+    id           = google_dns_managed_zone.sandboxes.id
+    name         = google_dns_managed_zone.sandboxes.name
+    name_servers = google_dns_managed_zone.sandboxes.name_servers
+  }
+  description = "The properties of the sandboxes sub-dns zone"
 }

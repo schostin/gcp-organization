@@ -19,9 +19,31 @@ module "shared_infrastructure_dns_project" {
   ]
 }
 
+locals {
+  dns_zone_name = replace(data.google_organization.sebastianneb.domain, ".", "-")
+}
+
 resource "google_dns_managed_zone" "main" {
   project     = module.shared_infrastructure_dns_project.project_id
-  name        = replace(data.google_organization.sebastianneb.domain, ".", "-")
+  name        = local.dns_zone_name
   dns_name    = "${data.google_organization.sebastianneb.domain}."
   description = "Main DNS Zone"
+}
+
+resource "google_dns_managed_zone" "sandboxes" {
+  project     = module.shared_infrastructure_dns_project.project_id
+  name        = "sandboxes-${local.dns_zone_name}"
+  dns_name    = "sandboxes.${google_dns_managed_zone.main.dns_name}"
+  description = "Sandboxes DNS Zone"
+}
+
+resource "google_dns_record_set" "sandboxes" {
+  project = module.shared_infrastructure_dns_project.project_id
+  name    = google_dns_managed_zone.sandboxes.dns_name
+  type    = "NS"
+  ttl     = 3600
+
+  managed_zone = google_dns_managed_zone.main.name
+
+  rrdatas = google_dns_managed_zone.sandboxes.name_servers
 }
