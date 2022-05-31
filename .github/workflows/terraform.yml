@@ -27,6 +27,16 @@ jobs:
         name: Setup TFLint
         with:
           tflint_version: v0.37.0
+      - name: Setup Terragrunt
+        uses: autero1/action-terragrunt@v1.1.0
+        with:
+          terragrunt_version: 0.37.1
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.1
+      - name: Terragrunt Init
+        run: cd base-infrastructure && terragrunt init
       - name: Init TFLint
         run: tflint --init
       - name: Run TFLint
