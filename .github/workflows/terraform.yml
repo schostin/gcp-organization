@@ -1,0 +1,60 @@
+name: "Terraform"
+on:
+  push:
+    branches: ["**"]
+    tags-ignore: ["**"]
+
+env:
+  TF_IN_AUTOMATION: 1
+  TF_INPUT: 0
+
+# Todo: Extract dependencies in Docker image
+jobs:
+  tflint:
+    name: TFLint base-infrastructure
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - uses: actions/cache@v2
+        name: Cache plugin dir
+        with:
+          path: ~/.tflint.d/plugins
+          key: ubuntu-tflint-${{ hashFiles('.tflint.hcl') }}
+      - uses: terraform-linters/setup-tflint@v1
+        name: Setup TFLint
+        with:
+          tflint_version: v0.37.0
+      - name: Init TFLint
+        run: tflint --init
+      - name: Run TFLint
+        run: tflint base-infrastructure
+  terragrunt-plan:
+    name: Plan base-infrastructure
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: "read"
+      id-token: "write"
+    needs:
+      - tflint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Terragrunt
+        uses: autero1/action-terragrunt@v1.1.0
+        with:
+          terragrunt_version: 0.37.1
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.1
+      - id: "auth"
+        name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v0.8.0"
+        with:
+          create_credentials_file: true
+          workload_identity_provider: "projects/572194382423/locations/global/workloadIdentityPools/github-auth/providers/github-provider2"
+          service_account: "terraform-organization-sa@sebastianneb-seed-2022.iam.gserviceaccount.com"
+      - name: Terragrunt Plan
+        run: cd base-infrastructure && terragrunt plan
+        # Todo: Upload plan and do an apply step as well.
