@@ -57,4 +57,4 @@ jobs:
           service_account: "terraform-organization-sa@sebastianneb-seed-2022.iam.gserviceaccount.com"
       - name: Terragrunt Plan
         run: cd base-infrastructure && terragrunt plan
-      # Todo: Upload plan and do an apply step as well.
+        # Todo: Upload plan and do an apply step as well.
