@@ -64,11 +64,13 @@ In order to do so follow the following steps.
   `gcloud projects create "$SEED_PROJECT_ID" --name "$SEED_PROJECT_NAME" --organization "$ORGANIZATION_ID"`
 - Get the project ID of the created project with `gcloud projects list`. Set this project as default for
   all following commands by `gcloud config set project $SEED_PROJECT_ID`.
-- Link a billing account to the project with
+- Create a new billing account (or use an existing one) and Link the billing account to the project with
   `gcloud beta billing projects link "$SEED_PROJECT_ID" --billing-account "$BILLING_ACCOUNT_ID"`
 - We need to enable some APIs first, the rest can later be activated via Code. This can be done with
   `gcloud services enable cloudresourcemanager.googleapis.com` and repeat for:
   - iamcredentials.googleapis.com
+  - cloudbilling.googleapis.com
+  - iam.googleapis.com
 - Create a new service account within the new seed project to be used by the terraform pipeline. This can be
   done with the command
   `gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" --display-name="Service Account for Organization Terraform Usage"`.
@@ -79,7 +81,7 @@ In order to do so follow the following steps.
 
   ```bash
   gcloud organizations add-iam-policy-binding "$ORGANIZATION_ID" \
-  --member "serviceAccount:terraform-organization-sa@sebastianneb-seed-2022.iam.gserviceaccount.com" \
+  --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
   --role "roles/resourcemanager.folderAdmin"
   ```
 
@@ -88,6 +90,14 @@ In order to do so follow the following steps.
   - roles/resourcemanager.folderAdmin
   - roles/resourcemanager.projectCreator
   - roles/resourcemanager.projectDeleter
+
+- You also have to grant the created service account rights on the billing account. This can be done with:
+
+  ```bash
+  gcloud beta billing accounts add-iam-policy-binding 012A37-911A41-9E7FAA \
+  --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
+  --role "roles/billing.user"
+  ```
 
 - After that we have to create a GCS state bucket that will holde the initial terraform state files. The command
   can be used: `gsutil mb -b on -l EUROPE-WEST3 gs://$BUCKET_NAME`

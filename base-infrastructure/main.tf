@@ -11,3 +11,7 @@ terraform {
 data "google_organization" "sebastianneb" {
   organization = var.organization_id
 }
+
+data "google_project" "seed_project" {
+  project_id = var.seed_project_id
+}

@@ -4,6 +4,13 @@ on:
     branches: ["**"]
     tags-ignore: ["**"]
 
+env:
+  TF_IN_AUTOMATION: 1
+  TF_LOG: info
+  TF_INPUT: 0
+  TERRAFORM_PLAN_FILE: base-infrastructure-${{ github.run_id }}.tfplan
+
+# Todo: Extract dependencies in Docker image
 jobs:
   tflint:
     name: TFLint base-infrastructure
@@ -52,3 +59,4 @@ jobs:
           service_account: "terraform-organization-sa@sebastianneb-seed-2022.iam.gserviceaccount.com"
       - name: Terragrunt Plan
         run: cd base-infrastructure && terragrunt plan
+  # Todo: Upload plan and do an apply step as well.
