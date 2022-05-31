@@ -6,9 +6,7 @@ on:
 
 env:
   TF_IN_AUTOMATION: 1
-  TF_LOG: info
   TF_INPUT: 0
-  TERRAFORM_PLAN_FILE: base-infrastructure-${{ github.run_id }}.tfplan
 
 # Todo: Extract dependencies in Docker image
 jobs:
