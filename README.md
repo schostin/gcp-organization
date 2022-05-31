@@ -1,6 +1,7 @@
 # Schostins GCP organization setup
 
 [![Reviewdog](https://github.com/schostin/gcp-organization/actions/workflows/reviewdog.yml/badge.svg)](https://github.com/schostin/gcp-organization/actions/workflows/reviewdog.yml)
+[![Terraform](https://github.com/schostin/gcp-organization/actions/workflows/terraform.yml/badge.svg?branch=main)](https://github.com/schostin/gcp-organization/actions/workflows/terraform.yml)
 
 This repository contains the source code to actively manage the google organization of sebastianneb.de.
 
