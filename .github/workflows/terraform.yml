@@ -41,7 +41,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup Terragrunt
-        uses: autero1/action-terragrunt@v1.1.0
+        uses: autero1/action-terragrunt@v1.1.1
         with:
           terragrunt_version: 0.37.1
       - name: Setup Terraform
