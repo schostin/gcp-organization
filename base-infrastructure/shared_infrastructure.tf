@@ -1,6 +1,6 @@
 module "shared_infrastructure_dns_project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "13.0.0"
+  version = "14.0.0"
 
   name              = "main-dns"
   random_project_id = true
@@ -15,7 +15,8 @@ module "shared_infrastructure_dns_project" {
 
   activate_apis = [
     "iam.googleapis.com",
-    "dns.googleapis.com"
+    "dns.googleapis.com",
+    "domains.googleapis.com"
   ]
 }
 
