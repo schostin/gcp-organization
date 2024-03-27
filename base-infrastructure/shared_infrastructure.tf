@@ -1,6 +1,6 @@
 module "shared_infrastructure_dns_project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "14.0.0"
+  version = "14.5.0"
 
   name              = "main-dns"
   random_project_id = true

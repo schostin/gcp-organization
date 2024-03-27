@@ -1,9 +1,9 @@
 terraform {
-  required_version = "~> 1.2.1"
+  required_version = "~> 1.7.5"
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 4.22.0"
+      version = "~> 5.22.0"
     }
   }
 }
@@ -16,7 +16,7 @@ locals {
 
 module "sandbox_project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "13.0.0"
+  version = "14.5.0"
 
   name              = local.trimmed_sandbox_project_name
   random_project_id = true
